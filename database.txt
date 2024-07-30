@@ -1,0 +1,33 @@
+open xampp shell
+================
+
+> mysql -uroot -p
+
+> CREATE DATABASE api_db;
+
+> GRANT ALL PRIVILEGES ON api_db.* TO api_db_user@localhost IDENTIFIED BY 'dk150198';
+
+> exit
+
+> mysql -uapi_db_user -p
+
+>  use api_db
+
+> CREATE TABLE task(
+    -> id INT NOT NULL AUTO_INCREMENT,
+    -> name VARCHAR (128) NOT NULL,
+    -> priority INT DEFAULT NULL,
+    -> is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    -> PRIMARY KEY (id),
+    -> INDEX (name) );
+
+> DESCRIBE task;
+
+> show indexes from task;
+
+> INSERT INTO task(name, priority, is_completed) VALUES
+    -> ('Buy new shoes', 1, true),
+    -> ('Renew Passport',2,false),
+    -> ('paint wall', NULL, true);
+
+> SELECT * FROM task;
