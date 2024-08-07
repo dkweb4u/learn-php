@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Php</title>
+</head>
+<body>
+
+    <h2>Constant</h2>
+
+    <pre>
+        define("Uppcase_Constant_name","value");
+
+        or
+
+        const Name =  'value';
+
+    </pre>
+
+    <hr>
+    <h2>declare</h2>
+    <p> If Small error also display </p>
+    <pre>
+        declare(strict_types=1);
+    </pre>
+
+    <hr>
+    <h2>array_column function</h2>
+    <p>Its get the column values of array inside array inside key and its returns in array</p>
+
+    <pre>
+        array_column(array, column_key, index_key);
+    </pre>
+
+    <hr>
+    <h2>Number format</h2>
+
+    <pre>
+        number_format(number,decimals,decimalpoint,separator)
+    </pre>
+    <hr>
+    <hr>
+    <hr>
+    <h2>Oops</h2>
+
+    <h4>Class</h4>
+    <p>class have 3 access modifiers. 'public', 'protected', 'private'</p>
+    <p>public -inside class, value and subclass you can access anywhere</p>
+    <p>protected -class and subclass only access </p>
+    <p>private - parent class only access</p>
+    <pre>
+        class User{
+            public $name;
+            protected $age;
+
+        
+            private $status = 'active';
+        
+            public function __construct(){
+                $this->name = "dkd";
+                echo "Called Construct"."<br>";
+            }
+        
+            public function login(){
+                echo "Logged is successfully";
+            }
+        
+            public function getprivatValue(){
+                return $this->status;
+            }
+        }
+        
+        $user = new User;
+        print_r( $user->name);
+        print_r($user->login());
+        print_r($user->status); // show error
+        print_r($user->getprivatValue()); // the value
+    </pre>
+
+    <hr>
+    <h2>Inheritence</h2>
+    <p>Its access another class methods using the <b>"extends"</b> keyword</p>
+    <pre>
+        class User{
+            public $name;
+            public $email;
+            protected $status = 'active';
+        
+            public function __construct($name, $email){
+                $this->name = $name;
+                $this->email = $email;
+            }
+        
+            public function login(){
+                echo "Logged is successfully";
+            }
+        
+            public function getprivatValue(){
+                return $this->status;
+            }
+        }
+        
+        class Admin extends User{  // keyword is very important for extends
+            public $level;
+            public  function __construct($name, $email, $level){
+                $this->level = $level;
+                parent::__construct($name,$email);   // call parent class and method
+            }
+        
+        }
+        
+        $admin1 = new Admin("dinesh","dk@gmail.com",5);
+        
+        print_r($admin1);
+    </pre>
+    <hr>
+    <h2>Polymorphism</h2>
+    <p>Its override the methods from parent class to child class</p>
+    <p>Below example two same method name is there its called parent child method </p>
+
+<pre>
+    class User{
+        public $name;
+        public $email;
+        protected $status = 'active';
+    
+        public function __construct($name, $email){
+            $this->name = $name;
+            $this->email = $email;
+        }
+    
+        public function login(){
+            echo "Logged is successfully";
+        }
+    
+        public function getprivatValue(){
+            return $this->status;
+        }
+    }
+    
+    class Admin extends User{  // keyword is very important for extends
+        public $level;
+        public  function __construct($name, $email, $level){
+            $this->level = $level;
+            parent::__construct($name,$email);   // call parent class and method
+        }
+    
+        // Its called Polymorphism 
+        public function login(){            // same  method for parent
+            echo "Admin Logged is successfully";
+        }
+    
+    }
+    
+    $admin1 = new Admin("dinesh","dk@gmail.com",5);
+    
+    print_r($admin1->login());
+</pre>
+
+<hr>
+
+<h2>Static method in class</h2>
+<p>Its used for no need to call in "new class" instead of "::" classname::value you can class directly</p>
+<pre>
+    class Maths{
+
+        public static $pi = 3.14;
+    
+        public static function add(...$num){
+            return array_sum($num);
+        }
+    
+    }
+    print_r(Maths::$pi);
+    echo "<br>";
+    print_r(Maths::add(1,2,3,4,5));
+</pre>
+</body>
+</html>
