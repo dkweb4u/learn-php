@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordpress Document</title>
+</head>
+<body>
+    <h2>Wordpress</h2>
+<h4>Create Theme</h4>
+<b>Note: all file name should be same</b>
+<ol>
+    <li>Create folder inside wp-contents > theme</li>
+    <li>index.php for home page (blog page)</li>
+    <li>front-page.php for home page(actuval home page)</li>
+    <li>style.css for style sheet</li>
+    <li>page.php for otherpage structure</li>
+    <li>screenshot size(100 / 75 ratio) for thumnail</li>
+    <li>single.php for single post structure</li>
+    <li>archive.php for category or author or time filters blog posts page style</li>
+    <li>header.php</li>
+    <li>footer.php</li>
+    <li>functions.php -add theme functions in php</li>
+    <li>page-partigularurl.php - Its method of create custom page design in particular url </li>
+    <li>search.php - Its page for after search result page in wordpress default search <b>http://localhost/mytheme/?<span style="color:red;">s=migration</span></b>  responce page</li>
+  </ol>
+<pre>
+    inside style sheet
+    /* 
+    Theme Name: Dk Theme
+    Author: Dinesh
+    Version: 1.0
+    */
+
+</pre>
+
+
+
+
+<hr>
+<h4>Header and Footer</h4>
+
+<ul>
+    <li>get_header(); -the function of get header</li>
+    <li>get_footer(); -the function of get footer</li>
+    <li>wp_head(); -in the head section load css and js function</li>
+    <li>wp_footer(); -in the footer section load css and js function</li>
+</ul>
+
+<hr>
+<h4>Show Post or pages</h4>
+
+<ul>
+    <li>have_posts() -having posts function or pages</li>
+    <li>the_post()  -current post  or pages</li>
+    <li>the_permalink() -link of the post page or pages</li>
+    <li>the_title() -title of the post  or pages</li>
+    <li>the_content() - all content of the post or pages</li>
+    <li>the_post_thumbnail() - Its get feature image from post</li>
+    <li>the_post_thumbnail_url() - Its get feature image link</li>
+    <li>found_posts - Is the method to get total count of the posts
+      <pre>
+
+        // single-prefesor.php file for reference
+
+        $likedCount = new WP_Query(array(
+  'post_type'=> 'like',
+  'meta_query' => array(
+    array(
+      'key'=>'like_prefessor_id',
+      'compare'=>"=",
+      'value' => get_the_ID()
+    )
+  )
+    ));
+
+    $likedCount->found_posts
+      </pre>
+    </li>
+    <li>the_post_thumbnail_url('parameter_name') - if use any wordpress image_size to applay this url paramter</li>
+    <li>the_field('nameofcustomfield'); -If create Custom field can access this method</li>
+    <li>the_excerpt() - limited content of the post or pages (blog page)</li>
+    <li>have_excerpt() - Its check the the_excerpt text is there or not </li>
+    <li>the_author_posts_link() - Display Author name and link of the post</li>
+    <li>the_time("d-M-Y") - Display post blog publish date with format</li>
+    <li>get_the_category_list(',')  - Display blog category name</li>
+    <li>paginate_links() - page navication of the blog page (wordpress display max 10 posts only)</li>
+    <li><b>Note:</b>paginate_links(array('total' => $varableName_Declure_wp_querry->max_num_pages))  if you want  page nation in particular page url post pass perameter like the method</li>
+</ul>
+<b>Ex:</b>
+<pre>
+
+while(have_posts()){
+    the_post();
+<code>the_permalink()</code>
+<code>the_title()</code>
+<code>the_content()</code>
+
+}
+</pre>
+
+<hr>
+
+<h4>Actions</h4>
+<h6>add_action()</h6>
+<p>Its used for run parlle your function</p>
+<pre>
+
+function your-own-function-name(){
+    wp_enqueue_style("nameofcssfile",path of stylesheet);
+}
+add_action("call default function","your-own-function-name");
+
+</pre>
+
+<pre>
+
+  //wordpress features features
+
+function themetitle(){
+
+  // register menu
+  register_nav_menu('headerMenuLocation','Header My Menu Location');
+  register_nav_menu('footerLocationOne','Footer Location One');
+  register_nav_menu('footerLocationTwo','Footer Location Two');
+
+
+  // style in title tag
+  add_theme_support('title-tag');
+
+
+    // Enable feature image option in postdata
+    add_theme_support('post-thumbnails');
+
+
+    // create resize image
+    add_image_size('professorLanscape',400,260,true);
+    add_image_size('professorPortrait',480,650,true);
+
+
+}
+
+add_action("after_setup_theme",'themetitle');  
+    
+</pre>
+
+<pre>
+
+    // custom post type
+    
+    function myeventspluginsetup(){
+        register_post_type("event",array(
+          "public" => true,
+          "labels" => array(
+            "name" => "Events"
+          ),
+          "menu_icon" => "dashicons-calendar-alt"
+        ));
+      }
+      
+      
+      add_action("init","myeventspluginsetup");
+</pre>
+
+<pre>
+
+    // display values pass through the url
+
+    function pre_adjects_urls($query){
+
+        if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()){
+          $today = date("Ymd");
+          $query->set('meta_key','event_date');
+          $query->set('orderby','meta_value');
+          $query->set('order','ASC');
+          $query->set('meta_query',array(
+            array(
+              "key" => 'event_date',
+              "compare" => ">=",
+              "value" => $today,
+              "type"  => "numeric"
+            )
+            ));
+        }
+      
+      }
+      
+      
+      add_action("pre_get_posts","pre_adjects_urls");
+</pre>
+
+<pre>
+  function CustomRestApi(){
+    register_rest_field("post","authorName",array(
+      "get_callback" => function(){return get_the_author();}
+    ));
+  }
+  
+  add_action('rest_api_init',CustomRestApi);
+</pre>
+
+
+
+<p><b>Example:</b></p>
+<p><b>Note: Give Unique name for file</b></p>
+<p>wp_enqueue_script("mainjs", get_theme_file_uri('build/index.js'),NULL (use null if not depend on any other js file),'1.0',true (true means footer, false means header));</p>
+<p>wp_enqueue_script("mainjs", get_theme_file_uri('build/index.js'), array('jquery'),'1.0',true);</p>
+<p>wp_enqueue_style("fontawesome",'//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');</p>
+<p>wp_enqueue_style("buildcss",get_theme_file_uri('/build/index.css'));</p>
+<p>wp_enqueue_style("maincss",get_stylesheet_uri()); // style.css load</p>
+<p>add_action("wp_enqueue_scripts","themefiles");</p>
+<p> style="background-image: url("get_theme_file_uri('images/library-hero.jpg')")" </p>
+<p>pre_get_posts - onload page run function</p>
+<p>rest_api_init - customise the api data</p>
+<p>register_rest_field - have 3 parameter , <br>
+1st post or page type, <br>
+2nd what you want in api in value,
+3rd callback function to get value Its array type
+</p>
+<p>get_theme_file_path("file") - Its point the theme folder</p>
+
+<hr>
+
+<h4>Function Names in wordpress</h4>
+
+<ul>
+    <li>wp_enqueue_scripts - onload files in wordpress function</li>
+    <li>get_stylesheet_uri() -get style.css file path</li>
+    <li>wp_head()  -call and mention the head files in wordpress (add in header.php inside head tag) </li>
+    <li>wp_footer() -call and mention the footer scripts  files in wordpress (add in footer.php before body tag)</li>
+    <li>get_theme_file_uri('path of file') -using for own file pointing the theme folder</li>
+    <li>wp_enqueue_style('path') -load CSS file</li>
+    <li>wp_enqueue_script('path','depening any js frame work','version',true) -load JS file (If 4th parameter is if you wants to load js file in bottom means "true" else "false")</li>
+    <li>after_setup_theme - call function in dynamic change value like (title of the page)</li>
+    <li>add_theme_support('title-tag') - title tag make dynamic</li>
+    <li>add_image_size('anyName',width,height,crop_true_or_false);  - Its wordpress feature for image croping. <b>the_post_thumbnail_url("professorLanscape")</b> Inside parameter pass that name</li>
+    <li>get_search_query() - Its function for get wordpress default search query</li>
+    <li>site_url('path') -give page link</li>
+    <li><b>esc_url(site_url())</b> - esc_url() is the extra security of website url </li>
+    <li><b>esc_html(get_search_query())</b> - esc_html() is the extra security of website url inside pass query if put html its fixit  </li>
+    <li><b>esc_attr(get_search_query())</b> - esc_attr() is the extra security of website url inside pass  get html contents if put html its fixit  </li>
+    <li><b>esc_textarea(query)</b> - esc_textarea() Its returns as plain text if html data also </li>
+    <li>get_the_ID() -get the current page id</li>
+    <li>wp_get_post_parent_id(get_the_ID())  -get parent page id (Inside pass page id)   {if current page have parent means return some value, otherwise return "0"}</li>
+    <li>get_the_title("id") -get title from passing id page title</li>
+    <li>get_the_title() -get curent page title</li>
+    <li></li>
+    <li>register_nav_menu('headerMenuLocation','anyname'); -Its register the menu on wordpress</li>
+    <li>wp_nav_menu(array('theme_location' => 'headerMenuLocation'));  -Pointing the Menus where you want in website (header.php). NOTE: after create menu in wordpress dashboard > Display location > Header Menu Location  (select our manu name)</li>
+    <li></li>
+    <li>wp_list_pages() -get all pages list</li>
+    <li>wp_list_pages("parameter") -get all pages list parameter pass assosative array to get particular parent childs</li>
+    <li>wp_list_pages(array('title_li' => NULL,'child_of' => 'id')) - parameter pass like this and id is the parent id</li>
+    <li>wp_list_pages(array('title_li' => NULL,'child_of' => 'id','sort_column' => 'menu_order')) - above is same but change childorder in menu order</li>
+    <li>get_pages(array('child_of' => get_the_ID()))  - get current page have childs otherwise return 0</li>
+    <li>body_class(); -Get curent page ids in wordpress class, Its used for customize paritcular page """"""""""""</li>
+    <li></li>
+    <li>get_permalink("para") - get passing parameter link</li>
+    <li>is_page('slug') -If curent page is match curuent slug then return true</li>
+    <li></li>
+    <li> language_attributes();  - Its used for get lanuguage in php, its used for top "html" tag </li>
+    <li>bloginfo('charset');     -Its used for get charset value, Its Used for get "metatag" charset value</li>
+    <li></li>
+    <li>is_category(); - In url check if current category blog posts are avilable the its return true</li>
+    <li>is_author(); - In url check if current author blog posts are avilable the its return true</li>
+    <li>single_cat_title(); - Get current category blog title</li>
+    <li>the_archive_title() - Above Two instude of this single function (Its Give automaticatly title based on url)</li>
+    <li>get_the_archive_title(); - Its get value but not display</li>
+    <li>the_archive_description(); -Its shows "User bigrphical" info or "category description"</li>
+    <li>get_the_archive_description(); Its get value but not display</li>
+    <li>wp_trim_words(get_the_content(),20); -Its method of trim wordpress post contents in particulur length (first parameter is content, second is set of words)</li>
+    <li>get_post_type() - Its method for get the page is page or post</li>
+    <li>get_post_type_archive_link('event')  - Its get custom_post_type link inside parameter pass (post type name)</li>
+    <li>is_admin() - if addmin page </li>
+    <li>$query->is_main_query()  - pass values on query function</li>
+    <li>get_field('custom_input_name')</li>
+    <li> get_template_part("path of the file into current directory",""); - Its work like php (inculdes or required functions in wordpress) Its pass two parameters firstOne- location of the file, second one is options its coverd as -value of the path, Note: No need to mention extention of the file</li>
+    <li>is_user_logged_in() -Its check user logged or not, if logged its return true</li>
+    <li>wp_registration_url() - wordpress registration url</li>
+    <li>wp_login_url() - wordpress login url</li>
+    <li>wp_logout_url() - wordpress logout url</li>
+    <li>get_avatar(get_current_user_id(), 60) - Its function get user photo. Its have 2 perameter. 1- user id, 2-size . 60 means 60px</li>
+    <li>show_admin_bar(false); -Its function to show top wordpress admin bar, if false hide, true show</li>
+
+    <li>add_filter("wp_insert_post_data","makeNoteUsPrivate"); - <b>wp_insert_post_data</b> is the filter function modify before save post data
+    <pre>
+      Ex: modifying post data before save
+
+add_filter("wp_insert_post_data","makeNoteUsPrivate");
+
+function makeNoteUsPrivate($data){
+
+  if($data['post_type'] == 'note' && $data['post_status'] != 'trash'){
+    $data['post_status']="private";
+  }
+
+  return $data;
+
+}
+
+    </pre>
+    
+    </li>
+
+
+</ul>
+<hr>
+<!-- =============================================================================== -->
+<h2>Custom Query in Wordpress</h2>
+
+<p><b>Using for wordpress default function to customize our functions</b></p>
+<p>Ex: If you want blog posts in home page or any other page use this methods</p>
+<pre>
+    $homepagePost = new WP_Query(          // Its create cusutom query instence
+  array(
+     "posts_per_page" => 2,                // passing parameter to get value
+  //   "posts_per_page" => -1,                // Get all posts defalut is 10 maximum
+     "category_name"  =>'Uncategorized', 
+     "post_type" =>"Page"                  // default is post if you want change page also
+  )
+);
+while($homepagePost->have_posts()){        // Using method of custom function 
+  $homepagePost->the_post();
+  the_title();
+}
+
+wp_reset_postdata();    // after end of custom function call the function, to avoid future issues
+
+
+// custom post sorting methods ==============================================
+
+   
+$today = date("Ymd");
+$homePageEvents = new WP_Query(array(
+  "posts_per_page" => 2,
+  "post_type" => "event",
+  // 'orderby' => "title",
+  //'orderby' => 'rand',
+// ================ custom field==================
+   'meta_key' => 'event_date',
+  // 'orderby' => 'meta_value',     // default text
+
+   'orderby' => 'meta_value',     // if number means add num
+
+// ================ custom field==================
+
+  //  "order" => "DESC"
+  'order' => "ASC",
+
+  //conditions add in posts
+  "meta_query" => array(
+    array(
+      "key" => 'event_date',
+      "compare" => ">=",
+      "value" => $today,
+      "type"  => "numeric"
+    )
+    )
+
+
+));
+
+while($homePageEvents->have_posts()){
+  $homePageEvents->the_post();
+}
+
+// If pagenation want means pass perameter
+
+echo paginate_links(
+    array(
+        'total' => $pastEvents->max_num_pages   // $pastEvents is wp_qurey declered variable 
+    )
+ );
+
+
+</pre>
+
+<pre>
+    // multiple filter querys ======================================
+
+// relitional between two post types
+
+    $today = date("Ymd");
+    $homePageEvents = new WP_Query(array(
+    "post_type" => "event",
+    'meta_key' => 'event_date',
+    'orderby' => 'meta_value_num',  
+    'order' => "ASC",
+    "meta_query" => array(
+    array(
+    "key" => 'event_date',
+    "compare" => ">=",
+    "value" => $today,
+    "type"  => "numeric"
+    ),
+    array(
+      "key" => 'programs_fields',
+      "compare" => "LIKE",
+      "value" => '"' . get_the_ID().'"'
+      )
+    )
+    
+    
+    ));
+    
+    while($homePageEvents->have_posts()){
+    $homePageEvents->the_post();
+
+    }
+
+
+</pre>
+
+<pre>
+// ================ custom query in particular page url ==================
+
+$today = date("Ymd");
+$pastEvents = new WP_Query(array(
+  "paged"  => get_query_var('paged',1),  // pass only work pagenation in page url
+  "post_type" => "event",
+   'meta_key' => 'event_date',
+   'orderby' => 'meta_value', 
+   'order' => "ASC",
+  //conditions add in posts
+  "meta_query" => array(
+    array(
+      "key" => 'event_date',
+      "compare" => "<",
+      "value" => $today,
+      "type"  => "numeric"
+    )
+    )
+
+
+));
+
+</pre>
+
+<pre>
+
+  // ================ relitional connection two post types like program and event ==================
+
+  $today = date("Ymd");
+$homePageEvents = new WP_Query(array(
+"post_type" => "event",
+'meta_key' => 'event_date',
+'orderby' => 'meta_value_num',  
+'order' => "ASC",
+"meta_query" => array(
+array(
+"key" => 'event_date',
+"compare" => ">=",
+"value" => $today,
+"type"  => "numeric"
+),
+array(
+  "key" => 'programs_fields',   // relatiation conntion from different post
+  "compare" => "LIKE",
+  "value" => '"' . get_the_ID().'"'
+  )
+)
+
+
+));
+</pre>
+
+<!-- check front-page.php -->
+<pre>
+  while($homePageEvents->have_posts()){
+    $homePageEvents->the_post();
+     get_template_part("template-parts/content",'event');
+  }
+</pre>
+<!-- ================================================================================== -->
+
+<hr>
+
+<h2>Custom Post Type</h2>
+
+<p><b>Note:</b> This type of custom post types use in create new folder inside <b>wp-content</b></p>
+<p>folder name always <b>mu-plugins</b> it means must use plugins <b>inside folder files automatically load in wordpress</b></p>
+<p>icons name get official site of https://developer.wordpress.org/</p>
+
+<p><b>If custom post link not work</b> just go settings > permalink > click > savechanges - Its automatically updated permalink structure</p>
+
+<p>If Custom post type Need New structure of layout means </p>
+<pre>
+    // create file structure like this
+
+    single-"post_type_name".php
+
+    // In the theme folder 
+
+    // same like all events page
+
+    archive-"post_type_name".php
+   
+</pre>
+
+<ul>
+    <li>add_action("init","myeventspluginsetup"); - add_action method "init" always init method call</li>
+    <li>register_post_type('customtypename',"array of value") - In the array value we add name, icons, and "public" always "true"</li>
+    <li></li>
+    <li>custom edit field use Plugin <b>"ACF"</b></li>
+    <li>Access the field "the_field("fieldname")" for display</li>
+    <li>Access the field "get_field("fieldname")" for get the value</li>
+
+
+</ul>
+
+<hr>
+
+<h2>Use full Plugins</h2>
+<ul>
+  <li>ACF -Its used for create custom field in post type data</li>
+  <li>All in One wp migration -Its Export our theme </li>
+  <li>Members role editor - create own role for edit support what types access</li>
+</ul>
+<hr>
+<!-- ============================== @wpscripts =========================================== -->
+<!-- import @wpscripts -->
+<h2>@wpscripts</h2>
+first past pacage.json file inside of the themefolder
+inside json files
+
+<pre>
+  {
+    "name": "fictional-university-theme",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "build": "wp-scripts build",
+      "start": "wp-scripts start",
+      "dev": "wp-scripts start",
+      "devFast": "wp-scripts start",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "@glidejs/glide": "^3.4.1",
+      "@wordpress/scripts": "*",
+      "axios": "^0.21.1",
+      "normalize.css": "^8.0.1"
+    }
+  }
+  
+</pre>
+
+after run terminal to install <br>
+>npm install  <br>
+>npm run start <br>
+>npm run build <br>
+
+<hr>
+<h2>Campus Plugin With google map integration</h2>
+<p> Its filter method of the acf</p>
+<p>Create input field in acf in google map type of field</p>
+<pre>
+
+function apikeyformap($api){
+$api['key']="askjdbjasdkasdbsaodhadas[das";
+return $api['key'];
+}
+
+
+add_filter('acf/fields/google_map/api','apikeyformap');
+
+</pre>
+
+<hr>
+<h2>Search Option Wordpress</h2>
+<p><b>http://localhost/mytheme/wp-json/wp/v2/posts</b> the <b>/wp-json/wp/v2/posts</b> Its contains the all posts raw data</p>
+<p><b>http://localhost/mytheme/wp-json/wp/v2/pages</b> the <b>/wp-json/wp/v2/pages</b> Its contains the all pages raw data</p>
+
+<h4>Posible querys</h4>
+<ul>
+  <li>'http://localhost/mytheme/wp-json/wp/v2/posts?per_page=1' - Latest page post</li>
+  <li>'http://localhost/mytheme/wp-json/wp/v2/posts/idnumber' - pass the id number to get exact post</li>
+  <li>'http://localhost/mytheme/wp-json/wp/v2/posts?search=searchdata' - pass the directly on query in the search to get match posts</li>
+</ul>
+<h4>Get and pass current site url in the js file</h4>
+<pre>
+  wp_localize_script('mainjs','Getrooturl',array(
+    'root_url'=>get_site_url(),
+  ));
+
+  wp_localize_script -function have 3 parameter
+
+  1st- js file name in the function.php
+  2nd- js var Name
+  3rd - passing datas in array format
+
+  Ex: 
+  use this:
+  http://localhost/mytheme/ - instead of - Getrooturl.root_url
+
+</pre>
+
+<h4>Wordpress Default search url</h4>
+<p>?s=siva - in the end of home url its automatically search the page</p>
+<p>page-search.php - is the form search of implemate</p>
+
+<h4>Add New property of rest api</h4>
+<pre>
+  function CustomRestApi(){
+    register_rest_field("post","authorName",array(
+      "get_callback" => function(){return get_the_author();}
+    ));
+  }
+  
+  add_action('rest_api_init',CustomRestApi);
+</pre>
+<pre>
+  
+  register_post_type("campus",array(
+    "show_in_rest" => true,      // Its allow to create rest api in wordpress           
+    "supports" => array("title",'editor','excerpt'), 
+    "rewrite" => array(
+      "slug" => "campuses"
+    ),
+    "has_archive" => true,  
+    "public" => true,
+    "labels" => array(
+      "name" => "Campuses",
+      "add_new_item" => "Add New Campus",
+      "edit_item" => "Edit Campus",
+      "all_items" => "All Campuses",
+      "singular_name" => "Campus"
+    ),
+    "menu_icon" => "dashicons-location-alt"
+  ));
+</pre>
+<p><b>For reference check inc/search-router.php</b></p>
+
+<hr>
+<h2>Custom User Role</h2>
+<p>install member role plugin in wordpress</p>
+<p>Add new role. If create custom post type  and create user to access control add below two lines to enable access controll</p>
+<pre>
+  
+  register_post_type("event",array(
+
+    "capability_type" => 'event',   
+    "map_meta_cap" => true,       
+    // this two lines is to give permision enable to the wordpress of custom post
+
+
+
+    "show_in_rest" => true,                 
+     "supports" => array("title",'editor','excerpt'),
+    "rewrite" => array(
+      "slug" => "events"
+    ),
+    "has_archive" => true,  
+    "public" => true,
+    "labels" => array(
+      "name" => "Events",
+      "add_new_item" => "Add New Event",
+      "edit_item" => "Edit Event",
+      "all_items" => "All Events",
+      "singular_name" => "Event"
+    ),
+    "menu_icon" => "dashicons-calendar-alt"
+  ));
+</pre>
+<hr>
+<h2>User permision to hide and redirect adminbar</h2>
+<p>If subscriber logged in hide the admin and adminbar</p>
+
+<pre>
+  
+// ======================  user avoid dashbord and redirect homepage  =============================================================
+
+add_action('admin_init',"Rediect_subscriber_to_home");
+
+function Rediect_subscriber_to_home(){
+  $currentuser = wp_get_current_user();
+
+
+  if(count($currentuser->roles) == 1 && $currentuser->roles[0] == 'subscriber'){
+    wp_redirect(site_url('/'));
+    exit;
+  }
+
+}
+// hide top adminbar option
+add_action('wp_loaded',"noSubAdminbar");
+
+function noSubAdminbar(){
+
+  $currentuser = wp_get_current_user();
+
+  if(count($currentuser->roles) == 1 && $currentuser->roles[0] == 'subscriber'){
+   show_admin_bar(false); // Its  hide top adminbar option in if subscriber login
+  }
+}
+</pre>
+<hr>
+<h2>Customize Login Page</h2>
+<pre>
+  // customize wordpress login page
+
+add_filter('login_headerurl','ChangewordpressLink');
+
+function ChangewordpressLink(){
+  return esc_url(site_url('/'));
+}
+//======================  add Mycss load  first in wordpress login
+
+add_action('login_enqueue_scripts',"MyLoginCssCode");
+
+//copy the css files to load in login page and paste it login page
+
+function MyLoginCssCode(){
+  wp_enqueue_style("fontawesome",'//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+  wp_enqueue_style("googlefont",'https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
+  wp_enqueue_style("buildcss",get_theme_file_uri('/build/index.css'));
+  wp_enqueue_style("customcss",get_theme_file_uri('/build/style-index.css'));
+}
+
+
+// =============================== change site name ===================
+
+add_filter("login_headertitle","ChangemyHeaderName");
+
+function ChangemyHeaderName(){
+  return get_bloginfo('name');
+}
+
+</pre>
+
+<hr>
+
+<h2>Add_fillter</h2>
+
+<h4><b>add_filter("wordpress-function","your-function",priarity-number,passing-perameter-number);</b></h4>
+<p>priarity-number - Its same filter using mulitiple time , Its runs depends on priarity number to which run first</p>
+<p>passing-perameter-number - Its passing perameter </p>
+<p>filter always return value</p>
+<p>Ex:</p>
+<pre>
+  add_filter("wp_insert_post_data","makeNoteUsPrivate",10,2);
+  add_filter("wp_insert_post_data","function2",11,2);
+  add_filter("wp_insert_post_data","makeNoteUsPrivate",2,0);
+</pre>
+
+<hr>
+<h2>CRUD Api Js Request</h2>
+<pre>
+  
+// create function
+function createPost(){
+
+let title =  document.querySelector(".create-note .new-note-title").value;
+let body =  document.querySelector(".create-note  .new-note-body").value;
+
+let data = {
+  'title':title,
+  'content':body,
+  'status': 'publish'  // note we return server side status as private from add_filter in function.php
+
+}
+
+  fetch('http://localhost/mytheme/wp-json/wp/v2/note/', 
+  {
+  headers:{
+      'Content-Type': 'application/json',  // mention sending type of data
+      'X-WP-Nonce': '< ?=wp_create_nonce('wp_rest')? >'   // login use nonce its for logged user nonce value pass before header
+  },
+  method:"POST" , // POST request (Its have get, post, delete) requests
+  body: JSON.stringify(data)
+  
+}).then(res=>res.json()).then(data=> addNode(data)
+).catch((err)=>console.log(err));
+
+}  
+
+function addNode(value){
+
+  // console.log(value);
+
+    let uldiv = document.querySelector('#my-notes');
+
+    let craeteli = document.createElement("li");
+    craeteli.setAttribute('class', `note-item-${value.id}`);
+
+    craeteli.innerHTML = data;
+
+    uldiv.insertBefore(craeteli,uldiv.children[0]);
+
+}
+
+
+
+// update function
+function updatePost(id){
+
+  let title =  document.querySelector(".note-item-"+id + " .note-title-field").value;
+  let body =  document.querySelector(".note-item-"+id + " .note-body-field").value;
+
+  let data = {
+    'title':title,
+    'content':body
+  }
+
+    fetch('http://localhost/mytheme/wp-json/wp/v2/note/'+id, // end pass post id
+    {
+    headers:{
+        'Content-Type': 'application/json', 
+        'X-WP-Nonce': '< ?=wp_create_nonce('wp_rest')? >'   // login use nonce its for logged user nonce value pass before header
+    },
+    method:"POST" , // POST request (Its have get, post, delete) requests
+    body: JSON.stringify(data)
+    
+  }).then(res=>res.json()).then(data=> console.log(data)
+  ).catch((err)=>console.log(err));
+
+}  
+// delete function
+function deletepost(id){
+
+document.querySelector(".note-item-"+id).remove();
+
+fetch('http://localhost/mytheme/wp-json/wp/v2/note/'+id, // end pass post id
+{
+headers:{
+    'X-WP-Nonce': '< ?=wp_create_nonce('wp_rest')? >'   // login use nonce its for logged user nonce value pass before header
+},
+method:"DELETE"  // delete request (Its have get, post, delete) requests
+}).then(res=>res.json()).then(data=> console.log("Deleted")
+).catch((err)=> console.log(err));
+
+}  
+
+
+
+</pre>
+
+</body>
+</html>

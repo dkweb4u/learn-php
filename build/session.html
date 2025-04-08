@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session</title>
+</head>
+<body>
+    
+
+
+<h2>Session Create </h2>
+<pre>
+session_start();
+
+$_SESSION["favcolor"] = "green";
+$_SESSION["favanimal"] = "cat";
+
+session_unset();
+session_destroy();
+</pre>
+<h2>Cookie</h2>
+<pre>
+    setcookie(name, value, expire, path, domain, secure, httponly);
+
+    Declure or Set Value
+    =====================    
+    $cookie_name = "user";
+    $cookie_value = "John Doe";
+    setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/");
+
+    Delete Cookie
+    ==============
+    setcookie("user", "", time() - 3600);
+
+    Get Value Cookie
+    =================
+    $_COOKIE[$cookie_name]
+
+</pre>
+<hr>
+<h2>File Opearation</h2>
+<pre>
+    fopen() - fopen('filename.txt', operation); 
+    fread() - fread($myfile,filesize("webdictionary.txt"));
+    fwrite()
+    fclose()
+Operations
+===========
+r-	Open a file for read only. File pointer starts at the beginning of the file
+w-	Open a file for write only. Erases the contents of the file or creates a new file if it doesn't exist. File pointer starts at the beginning of the file
+a-	Open a file for write only. The existing data in file is preserved. File pointer starts at the end of the file. Creates a new file if the file doesn't exist
+x-	Creates a new file for write only. Returns FALSE and an error if file already exists
+r+-	Open a file for read/write. File pointer starts at the beginning of the file
+w+-	Open a file for read/write. Erases the contents of the file or creates a new file if it doesn't exist. File pointer starts at the beginning of the file
+a+-	Open a file for read/write. The existing data in file is preserved. File pointer starts at the end of the file. Creates a new file if the file doesn't exist
+x+-	Creates a new file for read/write. Returns FALSE and an error if file already exists
+</pre>
+
+<hr>
+<h2>File Upload</h2>
+<pre>
+    move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], 'path')
+</pre>
+<hr>
+<h2>PHP - Access Modifiers</h2>
+<pre>
+public - the property or method can be accessed from everywhere. This is default
+protected - the property or method can be accessed within the class and by classes derived from that class
+private - the property or method can ONLY be accessed within the class
+</pre>
+<h2>Static Class</h2>
+<pre>
+    ClassName::staticMethod();
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api</title>
+</head>
+<body>
+    <h2>Staus Codes</h2>
+    <pre>
+ Status Codes
+==================
+        200 - ok 
+        201- Created
+        400 - Bad Request
+        401 - Unauthorised
+        403 - Forbidden
+        404 - Not Found
+        405 - Method Not Allowed
+        409 - Conflict
+        500 - Internal Server Error 
+    </pre>
+
+    <hr>
+    <h2>Curl Operations</h2>
+    <pre>
+ Without Token
+==================
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL, "https://randomuser.me/api");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$responce = curl_exec($ch);
+
+curl_close($ch);
+    </pre>
+<hr>
+    <pre>
+ Without Token
+==================
+$ch = curl_init();
+
+curl_setopt_array($ch,
+    [
+      CURLOPT_URL => "url",
+      CURLOPT_RETURNTRANSFER => true ,      
+      CURLOPT_HTTPHEADER => [ "Authorization: Api-Key token=tokenvalue"],
+    ]
+);
+
+$responce = curl_exec($ch);
+
+curl_close($ch);
+    </pre>
+
+<hr>
+<h2>Curl functions</h2>
+<pre>
+Get StatusCode 
+==============
+    $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+</pre>
+<hr>
+<pre>
+Get Content Type
+================
+$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+</pre>
+<hr>
+<pre>
+Get Content Length
+===================
+$content_type = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+</pre>
+<hr>
+<pre>
+Array To Convert url query 
+===========================
+http_build_query($arr);  
+</pre>
+<hr>
+<pre>
+Get Response Data Header info
+=============================
+
+CURLOPT_RETURNTRANSFER => true
+
+Data Header No Need
+====================
+
+CURLOPT_RETURNTRANSFER => False
+
+</pre>
+
+
+</body>
+</html>
